@@ -125,6 +125,91 @@ void tests(){
 
 int main(){
 	// replace with your code
+    //store all of the batches in vector 
+	vector<DryingSnapShot> Batches;
+	// one" << endl;
+	//ask user to choose A Q or V
+	char userCHOICE;
+	bool running = true; //change running to false when quit is chosen
+	while(running){
+		cout << "Choose an option: (A)dd, (V)iew Current Items, (Q)uit: ";
+		
+		cin >> userCHOICE;
+		char upperUserChoice = toupper(userCHOICE); //make all inputs upper case so you dont have to handke lower/upper
+
+		if(upperUserChoice == 'A'){
+			DryingSnapShot dss; //enter here so you can set up specific dss values
+			//values in dss:
+			/*
+			string name;
+			time_t startTime;
+			TimeCode *timeToDry;
+			*/
+			dss.name = "Batch - " + to_string(int(rand())); //string name
+			//now user needs to enter a radius for the calculations
+			cout << "radius: ";
+			double userRadius; //only ints?
+			cin >> userRadius;
+			//use radius to calculate the timecode (first need the surface area)
+			double sa = get_sphere_sa(userRadius);
+			//now use the sa to get the timeToDry
+			dss.timeToDry = compute_time_code(sa); //dss object
+			//start time to 0? always? yeah probs 
+			dss.startTime = time(0);
+
+			//create a new drying snap shot string
+            //cout << "snapshot here: " << endl;
+            //get everything to string 
+
+           
+
+            //get everuyhing onto a string for output
+            string timeToDryString = dss.timeToDry->ToString(); //time codes's to string method...right
+            long long int timeRemaining = get_time_remaining(dss);
+            //conv the int to a timecode 
+            TimeCode* TCofTimeReamining = compute_time_code(timeRemaining);
+			//string result of the snapshot
+            string snapshotResult = dss.name + "(take " + timeToDryString + " to dry) time remaining: " + TCofTimeReamining->ToString();
+            cout << snapshotResult << endl;
+             //Create a new batch in the vector and push onto the vector 
+            DryingSnapShot addBatch;
+            addBatch.name = dss.name;
+            addBatch.startTime = time(0);
+            addBatch.timeToDry = dss.timeToDry;
+            //push back onto the vector
+            Batches.push_back(addBatch);
+		}
+        else if (upperUserChoice == 'V'){
+            //view the batches in action already
+            //first, if theere are none say that
+            if(Batches.empty()==true){
+                cout << "No batches in progress to view." << endl;
+            }
+            else{
+                for(size_t i=0; i<Batches.size(); i++){//for all of the batches in the vector
+                    //get the amount of time each batch has left so you can build the string
+                    long long int timeRemainingNUM = get_time_remaining(Batches[i]);
+                    //convert to time code format
+                    TimeCode* TCofTimeReamining = compute_time_code(timeRemainingNUM);
+                    //get time to dry for each too for the string
+                    string timeToDryString = Batches[i].timeToDry->ToString();
+                    //now print the string using all of these components
+                    string snapshotResult = Batches[i].name + "(takes " + timeToDryString + " to dry) time remaining: " + TCofTimeReamining->ToString();
+                    cout << snapshotResult << endl;
+                } 
+                //print num of things being trackes (batches in vector)
+                cout << Batches.size() << " batches being tracked." << endl;
+            }
+
+        }
+        else if(upperUserChoice == 'Q'){
+            running = false;
+            break;
+        }
+    }
+    Batches.clear();
+		
+
 	tests();
 	return 0;
 }
